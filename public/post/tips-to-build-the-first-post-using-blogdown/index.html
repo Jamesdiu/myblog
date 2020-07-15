@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+<title>Tips to build the first post using Blogdown</title>
+
+
+  
+
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="alternate" type="application/rss+xml" href="/index.xml" title="Hugo Themes">
+
+<link id="dark-mode-theme" rel="stylesheet" href="/css/dark.css" />
+<link rel="stylesheet" href="/fontawesome/css/all.min.css" />
+
+<script src="/js/bundle.js"></script>
+<script src="/js/instantpage.js" type="module" defer></script>
+<meta name="generator" content="Hugo 0.70.0" />
+  </head>
+  <body>
+    
+  
+
+
+
+
+  <header>
+    <nav class="navbar">
+  <div class="nav">
+    
+      <a href="/" class="nav-logo">
+      <img src="/images/icon.png"
+           width="50"
+           height="50"
+           alt="Logo">
+      </a>
+    
+
+    <ul class="nav-links">
+      
+        
+          <li><a href="/about/" name="About"><i class="fas fa-user fa-lg"></i></a></li>
+        
+      
+        
+          <li><a href="/tags" name="Tags"><i class="fas fa-tag fa-lg"></i></a></li>
+        
+      
+        
+          <li><a href="/search" name="Search"><i class="fas fa-search fa-lg"></i></a></li>
+        
+      
+    </ul>
+  </div>
+</nav>
+
+    <div class="intro-header">
+      <div class="container">
+        <div class="post-heading">
+          
+            <h1>Tips to build the first post using Blogdown</h1>
+          
+          
+            <span class="meta-post">
+  <i class="fa fa-calendar-alt"></i>&nbsp;Jun 5, 2020
+  
+    &nbsp;&nbsp;&nbsp;<i class="fa fa-folder-open"></i>&nbsp;
+    
+      <a href="//categories/r/">R</a>&nbsp;
+    
+  
+</span>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+  <div class="container" role="main">
+    <article class="article" class="blog-post">
+      
+    <p>Yeah! I start blogging with <code>blogdown</code> finally! It took a longer time than I expected. Although some Youtubers are teaching how to build it within 15 min, I have used much more than that! I guess it is normal for someone like me without much experience with Hugo, Netlify, and markdowns. Since there are plenty of resources online, I would recommend reading the post from <a href="https://www.storybench.org/how-to-build-a-website-with-blogdown-in-r/">Martin Frigaard</a> among all I read.  This post provides very clear and informative descriptions of the procedures that I followed. Indeed, it is also worth to go through the book <a href="https://bookdown.org/yihui/blogdown/workflow.html">Creating Website with R Markdown</a>, written by YiHui Xie, so that to understand more about the tools and techniques used in <code>blogdown</code>.</p>
+<p>Meanwhile, I would like to add some tips that I noticed. I hope it may help with other beginners;</p>
+<ol>
+<li>
+<p>Pay attention to <strong>HUGO VERSION</strong> required of the template used. When you are connecting your blog to Netlify, you have to provide the &ldquo;Environment variables&rdquo; such that to ensure the version is up-to-date enough to run your template.</p>
+</li>
+<li>
+<p>Remember to change <strong>baseURL</strong> into the website address on Netlify. Otherwise, it would not be able to obtain all data from git, for example, the template design used.</p>
+</li>
+<li>
+<p>Also for <strong>baseURL</strong>, make sure &quot; / &quot; is NOT missing at the end.</p>
+</li>
+</ol>
+<p>Above are the issues locked me down and took me a few hours to find out. Hope these would help the next one to go smoothly!</p>
+
+
+
+      
+        <div class="blog-tags">
+          
+            <a href="//tags/blogdown/">blogdown</a>&nbsp;
+          
+        </div>
+      
+    </article>
+    
+    
+  </div>
+
+    <footer>
+  <div class="container">
+    <p class="credits copyright">
+      <a href="/about">hugo author</a>
+      &nbsp;&copy;
+      2020
+
+      
+        &nbsp;/&nbsp;
+        <a href="/">Hugo Themes</a>
+      
+
+      &nbsp;&ndash;&nbsp;
+      <i class="fas fa-moon" id="dark-mode-toggle"></i>
+
+      <p class="credits theme-by">
+        Powered By <a href="https://gohugo.io">Hugo</a>&nbsp;Theme <a href="https://github.com/matsuyoshi30/harbor">Harbor</a>
+      </p>
+    </p>
+  </div>
+</footer>
+
+  </body>
+</html>
