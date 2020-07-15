@@ -252,6 +252,7 @@ It is quite suprise to find out that quite a number of games allowing more than 
 table(df[df$maxplayers>10,"maxplayers"])
 ```
 Besides, most of the games are designed for 2, 2-4 or 2-6 players without any surprise.
+
 ```{r, echo=FALSE, message=FALSE}
 ggplot(df %>% select(maxplayers, minplayers) %>%
   filter(!is.na(minplayers), !is.na(maxplayers)) %>%
@@ -305,6 +306,7 @@ As stated playing time is only an estimation of actual time, it is better and si
 |Normal | 60 - 119 min|
 |Long | 120-179 min|
 |Extreme |180 min or longer|
+
 ```{r, warning=FALSE, message=FALSE}
  df <- df %>% mutate(duration = ifelse(playingtime < 30, "Instant",
                            ifelse(playingtime < 60, "Short",
@@ -359,4 +361,5 @@ ggplot(df,
 ```
 
 {{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-21-1.png" title="" width="600">}}
+
 
