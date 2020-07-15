@@ -14,10 +14,10 @@ Yeah! I start blogging with `blogdown` finally! It took a longer time than I exp
 
 Meanwhile, I would like to add some tips that I noticed. I hope it may help with other beginners;
 
-1. Pay attention to **HUGO VERSION** required of the template used. When you are connecting your blog to Netlify, you have to provide the "Environment variables" such that to ensure the version is up-to-date enough to run your template.  
+1. Pay attention to **HUGO VERSION** required of the template used. When you are connecting your blog to Netlify, you have to provide the "Environment variables" such that to ensure the version is up-to-date enough to run your template.
 
-2. Remember to change **baseURL** into the website address on Netlify. Otherwise, it would not be able to obtain all data from git, for example, the template design used.
+2. Remember to change the **baseURL** in *config.toml* into the website address on Netlify. Otherwise, it would not be able to obtain all data from git, for example, the template design used.
 
 3. Also for **baseURL**, make sure " / " is NOT missing at the end.
 
-Above are the issues locked me down and took me a few hours to find out. Hope these would help the next one to go smoothly!
+Above are the issues that locked me down and took me a few hours to find out. Hope these would help the next one to go smoothly!

@@ -5,6 +5,7 @@ description: Guide to emoji usage in Hugo
 tags:
 - emoji
 title: Emoji Support
+draft: TRUE
 ---
 
 Emoji can be enabled in a Hugo project in a number of ways. 

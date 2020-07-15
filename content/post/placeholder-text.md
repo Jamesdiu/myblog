@@ -6,6 +6,7 @@ tags:
 - markdown
 - text
 title: Placeholder Text
+draft: TRUE
 ---
 
 Lorem est tota propiore conpellat pectoribus de
