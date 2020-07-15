@@ -1,0 +1,362 @@
+---
+title: How to choose a satisfying board game? Part I
+author: James Diu
+date: '2020-07-15'
+slug: how-to-choose-a-satisfying-board-game-part-i
+categories:
+  - R
+  - boardgame
+tags: []
+backtotop: no
+toc: no
+---
+
+{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/catan_GOT.png" title=""  width="600" >}}
+
+Being a board game enthusiast, I always introduce board games to my friends. Some of them might be another enthusiast, while some might have an idea that the board game is equivalent to chess. Most of the time I use my instinct and my understanding of the taste of my friends to decide which game would provide the greatest fun for us. However, it can be very biased due to my personal preference. On the other hand, I love to collect *different* board games. I hope my collection can be diverse enough to serve all kinds of my friends' backgrounds and preferences. So how should I choose a game to meet general preference? And which game should I select, such that it will enrich my collection and make sure it could be fun? (It is quite upset when you find out a new game is boring...) Learning more about the general preference statistically would be a nice solution.
+
+### Data description
+Regarding the data of board games, [BoardGameGeek(BGG)](https://boardgamegeek.com/) is undoubtedly the biggest source. However, I am not going to pull the data directly. Instead, I will use the data from an interesting [post](https://dvatvani.github.io/BGG-Analysis-Part-1.html) about the trend and rating bias on BGG in 2018, which also come from BGG. Although it is not up-to-date data, I think it can still give us some insights and suggestions.
+```{r, include=FALSE}
+library(data.table)
+library(tidyverse)
+library(stringr)
+library(corrplot)
+library(gridExtra)
+library(splitstackshape)
+library(treemap)
+library(entropy)
+library(tidyselect)
+```
+```{r read_data, message=FALSE}
+games_Jan2018 <- read_csv("data/games_Jan2018.csv")
+df <- games_Jan2018
+```
+```{r data_cleaning, include=FALSE}
+# These columns should have missing value instead of 0, replace with NA
+list <- c("minplayers", "maxplayers", "playingtime","minplaytime", "maxplaytime")
+df[list][df[list]==0]<-NA
+
+# assign expansion as 1, boardgame as 0
+df<- df %>% mutate(type = ifelse(type == "boardgame", 0, 1)) 
+
+# Some error with the min & max players, and also min and max playing time
+# df %>% filter(minplayers > maxplayers)
+
+# Update data by visiting BGG for accurate information
+df[df$id==234768,]$minplayers <- 2
+
+df[df$id==235285,]$minplayers <- 2
+df[df$id==235285,]$maxplayers <- 6
+
+df[df$id==75294,]$minplayers <- 2
+df[df$id==75294,]$maxplayers <- 20
+
+# Since playing time is equal to maxplaytime, I switch the value for those minplaytime > maxplaytime 
+df <- df %>% mutate(maxplaytime = ifelse(maxplaytime<minplaytime, minplaytime, maxplaytime),
+                    minplaytime = ifelse(minplaytime<playingtime, minplaytime, playingtime))
+```
+
+In this dataset, we have total 95,777 board games, including the 80,105 base games and 15,672 expansion. The information can also be separated into 2 groups: games features and responses on BGG. After removing some duplicated or reduntant information, below are the useful columns: 
+
+Features: `type`, `yearpublished`, `minplayers`, `maxplayers`, `playingtime`, `minage`, `types`, `categories`, `mechanics`, `desginers` 
+
+Responses: `users_rated`, `bayes_average_rating`, `average_weight`
+
+One of the most important data is `bayes_average_rating`, which is only available for the games with at least 30 users' ratings. It is used instead of the average player rating, which you normally see on the BGG when you search for any games, in order to exclude those games with biased rating due to small sample size. After filtering out those data less than 30 ratings, we still have 15,026 games and 4,714 expansion and we will place our focus on them. Apart from `bayes_average_rating`, it is necessary to define `average_weight`. From BGG, there is no explicit defination for weight. From my observation, I would assume `average_weight` as the complexity of a game. Although it is a subjective index given by the users and it is hard to obtain this data for those new games, I think this information would be still useful for us to determine if a complex game is more popular.
+```{r}
+df %>% filter(users_rated>=30) %>% group_by(type) %>% summarise(n=n())
+df <- df %>% filter(users_rated>=30)
+```
+
+Now we have a rough idea about what cards are on our hand. Let's find out more from them. In the beginning, we start with the numerical data.
+
+### Correlation - The rating has positive correlation with weight & minimum age
+
+Fig.1 is the correlation table among different numerical features. We can see the BGG rating is positivly correlated with the average weight and minimum age. Meanwhile, weight and age also show positive correlation so means they have some colinearity. Considering that Besides, the rating is somehow independent of the number of players and the duration of playing time, but both features show some dependence on both features. Therefore we will go through all these features one by one.
+```{r fig1, fig.cap='A fancy pie chart.', tidy=FALSE}
+corrplot(cor(
+  df %>% select(BGG_rating = bayes_average_rating,
+                avg_weight = average_weight,
+                yearpublished, minage,
+                minplayers, maxplayers, playingtime),
+  use = "pairwise.complete.obs" # igrone missing pairs of data
+  ),
+  method = "circle", type ="lower", tl.cex = 1, tl.srt = 0.1,
+  title = "Fig.1: Correlation between numerical data",
+  mar=c(0,0,2,0))
+  
+```
+
+{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/fig1-1.png" title="" width="800">}}
+
+### Weight - Less complicated game is less popular
+It obvious that the weight of games has positive skewness (fig. 2), with the mode at 2. Meanwhile, we should be reminded that this is a score provided by the users and it is a relative value to other games. 
+```{r, echo=FALSE}
+ggplot(df, aes(x=average_weight)) +
+  geom_histogram(binwidth = 0.5) +
+  scale_x_continuous(breaks = seq(0:5), name = "Average Weight") +
+  scale_y_continuous(name="") +
+  ggtitle("Fig.2: Histogram of average weight(complexity)")
+```
+
+{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-3-1.png" title="" width="600">}}
+
+From fig.3, we can see the rating moves slightly upwards when the complexity increase. One of the most interesting thing is no games with an average weight higher than 2 has a rating below 5, while all games rated above 8 also belong to this group.
+```{r, echo=FALSE}
+avg_BGG_rate <- mean(df$bayes_average_rating)
+ggplot(df, aes(x=average_weight, y=bayes_average_rating)) +
+  geom_bin2d(binwidth = 0.5) +
+  scale_fill_continuous(type = "viridis") + 
+  scale_x_continuous(name = "Average Weight") +
+  scale_y_continuous(name = "BGG Rating") +
+  theme_bw() +
+  ggtitle("Fig.3: Distribution of weight against rating")
+```
+
+{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-5-1.png" title="" width="600">}}
+
+### Year of publish - New published games has better rating in average
+Since some of the games on the list do not have a clear publish date, only games published on or after 1985, which have already cover more than 90% of the games, would be kept for this feature. The rest will be set into *NA* as irrelevant due to the small sample size.
+```{r}
+sort(df$yearpublished)[round(nrow(df)/10)]
+```
+
+Fig.4 shows that the average BGG rating raises slightly over the years. However, it is hard to conclude whether the games published are getting better or the baseline of users rating is going upwards. Also the highest rating and rating range are going higher and wider among the years. Details can also be found in Fig.6.
+
+```{r, echo=FALSE}
+annual_rating <-
+  ggplot(df %>% group_by(yearpublished) %>%
+         filter(yearpublished >= 1985)) +
+  geom_point(aes(x=yearpublished, y=bayes_average_rating, color = as.factor(yearpublished)),
+             show.legend = FALSE) +
+  # theme(legend.position = "none") +
+  guides(colour = "none")+
+  scale_x_continuous(name = "")+
+  scale_y_continuous(name = "")+
+  ggtitle("Fig.4: BGG rating over publish year (user rated >= 30)")
+  
+annual_rating  +
+  geom_point(data = df %>% group_by(yearpublished) %>%
+         filter(yearpublished >= 1985) %>% summarise(avg_BGG_rating = mean(bayes_average_rating)),
+         aes(x = yearpublished, y=avg_BGG_rating, shape = "mean")) + 
+  theme(
+    legend.position = c(0, 1),
+    legend.justification = c("left", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(1, 6, 6, 6)
+    ) +
+  geom_hline(yintercept = avg_BGG_rate, alpha = 0.5, linetype = "dashed") +
+  geom_text(aes(1985, avg_BGG_rate, 
+                label = paste("avg_BGG_rating: ", round(avg_BGG_rate,1)), 
+                vjust = -1, hjust = -0.01), size = 3)
+```
+
+{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-6-1.png" title="" width="600">}}
+
+The number of publish increase exponentially in recent years. It is also a strong evidence that the marketing is expanding very fast and why the rating range is getting larger. There are fewer pulished recorded after 2015. It is possibly because the time lag between publishing and reaching to the players. Considering the market provides more than 1,000 games in the past few years, it does take some time to get enough users to rate, especially not all players would rate for the games they tried.
+```{r fig5, fig.cap='', tidy=FALSE}
+ggplot(df %>% filter(yearpublished >=1985) %>% group_by(yearpublished) %>% summarise(n=n())) +
+  geom_point(aes(x=yearpublished, y=n, color = as.factor(yearpublished))) +
+  theme(legend.position = "none") +
+  scale_x_continuous(name = "")+
+  scale_y_continuous(name = "")+
+  ggtitle("Fig.5: Number of game published along year (user rated >=30)")
+```
+
+{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-7-1.png" title="" width="600">}}
+
+```{r, echo=FALSE}
+corrplot.mixed(cor(df %>% filter(yearpublished >=1985) %>%
+               group_by(`year of publish` = yearpublished) %>% 
+                 summarise(`No. of publish` = n(),
+                           `Avg rating` = mean(bayes_average_rating),
+                           `SD of rating` = sd(bayes_average_rating)),
+         use = "pairwise.complete.obs" # igrone missing pairs of data
+  ),
+  lower.col = "black", number.cex = .7, tl.cex=0.7,
+  title = paste("Fig.6: Correlation among year of publish, ","\n", "no. of publish per year, rating average & sd"),
+  mar=c(0,0,2,0))
+```
+
+{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-9-1.png" title="" width="600">}}
+
+### Minimum age - minimum age from 12-14 has the highest rating
+
+We can know that the minimum age is positively correlated to weight and rating from the correlation chart before. It is reasonable because most of the BGG users are not children and I have sure they are not that interested in those games for children. This fact also implies the evaluation of children's games may be invalid since the focus group is different. Besides, the minimum age mainly falls into 5 ages: 8, 10, 12, 13 & 14 and the distribution is very inbalance. In general, the purpose of minimum age is an index for the complexity and content However, the judgment depends highly on the publisher (noted that games specially for 18+ are rare), therefore I would also prefer to transfer minimum age into 5 groups: <6, 6-8, 9-11, 12-14, 15+.
+
+```{r}
+df <- df %>% mutate(age_group = ifelse(minage>14, "15+",
+                                        ifelse(minage>11, "12-14",
+                                               ifelse(minage>8, "9-11",
+                                                      ifelse(minage>5, "6-8","<6")))),
+                     age_group = factor(age_group, levels = c("<6", "6-8", "9-11","12-14","15+")))
+```
+```{r, echo=FALSE}
+age_group <- df %>% group_by(age_group) %>% summarise(n=n())
+ggplot(df)+
+  geom_bar(aes(x=age_group, fill=age_group), stat = "count") +
+    geom_text(data = age_group,
+            aes(age_group, n+2, 
+                label = paste(n), vjust=1.5), size = 4) +
+    theme(
+    axis.title = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks = element_blank(),
+    legend.position = "none") +
+  scale_y_continuous(name="")+
+  ggtitle("Fig.7: Histogram of minimum age group")
+```
+
+{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-10-1.png" title="" width="600">}}
+
+According to the plot, it is easy to see that <6 & 15+ has a lower rating than other. It reviews that the correlation between minimum age and rating may not be linear.
+
+```{r, echo=FALSE}
+age_rating <-
+  ggplot(df, aes(x=age_group, y=bayes_average_rating, color = age_group)) +
+  geom_point(show.legend = FALSE) +
+  guides(colour = "none")+
+  geom_jitter() +
+  scale_x_discrete(name = "Age group")+
+  scale_y_continuous(name = "")+
+  ggtitle("Fig.8: BGG rating over minimum age group (user rated >= 30)")
+  
+age_rating + 
+    geom_point(data = df %>%
+               group_by(age_group) %>%
+               summarise(avg_BGG_rating = mean(bayes_average_rating)),
+             aes(x = age_group, y=avg_BGG_rating, shape ="mean"), color = "black") +
+  theme(
+    legend.position = c(0, 1),
+    legend.justification = c("left", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(1, 6, 6, 6)
+    ) +
+  geom_hline(yintercept = avg_BGG_rate, alpha = 0.5, linetype = "dashed") +
+  geom_text(aes(0, avg_BGG_rate, 
+                label = paste("avg_BGG_rating: ", round(avg_BGG_rate,1)), 
+                vjust = -1, hjust = -0.01), size = 3, color="black")
+```
+
+{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-12-1.png" title="" width="600">}}
+
+### Number of players - Most are designed for 2-4 players. Irrelevant to rating.
+
+There are 1,039 games (~5%) designed for more than 10 players.
+```{r}
+nrow(df[df$maxplayers>10,"maxplayers"])
+```
+It is quite suprise to find out that quite a number of games allowing more than 100 players, 3 of them even 1000.  
+```{r}
+table(df[df$maxplayers>10,"maxplayers"])
+```
+Besides, most of the games are designed for 2, 2-4 or 2-6 players without any surprise.
+```{r, echo=FALSE, message=FALSE}
+ggplot(df %>% select(maxplayers, minplayers) %>%
+  filter(!is.na(minplayers), !is.na(maxplayers)) %>%
+         top_n(-n()*0.95, maxplayers) %>%
+    group_by(minplayers, maxplayers) %>%
+    summarise(n=n())) +
+  geom_point(aes(x=maxplayers, y=minplayers, size = n,
+                 color = ifelse(n>=4000, "4000+",
+                                ifelse(n>=3000, "3000-3999",
+                                       ifelse(n>=2000, "2000-2999", "<2000"))))) +
+  scale_x_continuous(breaks = seq(1:10)) + 
+  scale_y_continuous(breaks = seq(1:10)) +
+  scale_color_brewer(palette="Dark2") + 
+  guides(size = FALSE) +
+  scale_color_discrete(name = "Count") +
+  ggtitle("Fig.9: Distribution of players avaliable, excluding max 5%")
+```
+
+{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-14-1.png" title="" width="600">}}
+
+It doesn't seem to have a relationship between minimum and maximum players.
+```{r, echo=FALSE}
+ggplot(df %>% filter(!is.na(minplayers), !is.na(maxplayers)) %>%
+         top_n(-n()*0.95, maxplayers)) + 
+  geom_jitter(aes(x=minplayers, y = bayes_average_rating, color = as.factor(maxplayers))) +
+  facet_wrap(~maxplayers) +
+  theme(legend.position = "none") +
+  scale_x_continuous(breaks = (1:10))+
+  ggtitle("Fig.10: Rating according to min & max players")
+```
+
+{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-16-1.png" title="" width="600">}}
+
+### Playing time - Longer seems to be better
+
+In most of the cases, the playing time is longer than its stated. Therefore, we will only consider `playingtime`, which is the same as `maxplaytime` but more completed, as the playing time of a game. Similar to the number of players, there are some extreme value in playing time. Around 10% of them lasts longer than 2 hours and the maximum playing time on the list (**The Campaign for North Africa**) is 1000 hours, which means more than a month! I am also very surprise that more than 100 users has rated for this game. Another unbelievable fact is: the minimum players for this game is 8!
+```{r}
+nrow(df %>% filter(playingtime > 120))
+```
+```{r}
+head(df %>% arrange(desc(playingtime)) %>%
+       select(type, name, minplayers, playingtime, BGG_rating = bayes_average_rating, users_rated), 5)
+```
+
+As stated playing time is only an estimation of actual time, it is better and simplier to group them together (Fig. 11):
+
+|Group|Duration|
+|:---|:---|
+|Instant | less than 30|
+|Short | 30 - 59 min|
+|Normal | 60 - 119 min|
+|Long | 120-179 min|
+|Extreme |180 min or longer|
+```{r, warning=FALSE, message=FALSE}
+ df <- df %>% mutate(duration = ifelse(playingtime < 30, "Instant",
+                           ifelse(playingtime < 60, "Short",
+                                  ifelse(playingtime <120, "Normal",
+                                         ifelse(playingtime < 180, "Long", 
+                                                ifelse(is.na(playingtime), NA, "Extreme"))))),
+         duration = factor(duration, levels = c("Instant", "Short", "Normal", "Long", "Extreme")))
+duration_group <- df %>% group_by(duration) %>% summarise(n=n())
+```
+```{r, echo=FALSE}
+ggplot(df) +
+  geom_bar(aes(x=duration, fill=duration), stat = "count") +
+  geom_text(data = duration_group,
+            aes(duration, n+2, 
+                label = paste(n), vjust=1.5), size = 4) +
+    theme(
+    axis.title = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks = element_blank(),
+    legend.position = "none") +
+  scale_y_continuous(name="") +
+  scale_x_discrete(name = "Duraion groups") +
+  ggtitle("Fig.11: Counts of duration groups")
+```
+
+{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-19-1.png" title="" width="600">}}
+
+Fig.12 shows us that the rating has a similar effect as age group: rating increases when the duration is longer and seems to reduce when the duration is extreme. From the relation with weight we know that complicated game has a higher rating and it is hard to create a complicated one within a short playing time. Meanwhile, like watching a movie, it is more possible to get bored when it is extreme long. 
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+
+ggplot(df,
+       aes(x=duration, y=bayes_average_rating, color=duration)) +
+  geom_jitter()+
+  guides(color = "none") +
+  scale_y_continuous(name = "BGG rating") +
+  theme_bw() +
+  ggtitle("Fig.12: Rating against duration group")+ 
+    geom_point(data = df %>%
+               group_by(duration) %>%
+               summarise(avg_BGG_rating = mean(bayes_average_rating)),
+             aes(x = duration, y=avg_BGG_rating, shape ="mean"), color = "black") +
+  theme(
+    legend.position = c(1, 0),
+    legend.justification = c("right", "bottom"),
+    legend.box.just = "right",
+    legend.margin = margin(1, 6, 6, 6)
+    ) +
+  geom_hline(yintercept = avg_BGG_rate, alpha = 0.5, linetype = "dashed") +
+  geom_text(aes(0, avg_BGG_rate, 
+                label = paste("avg_BGG_rating: ", round(avg_BGG_rate,1)), 
+                vjust = -1, hjust = -0.01), size = 3, color="black")
+```
+
+{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-21-1.png" title="" width="600">}}
+

@@ -14,6 +14,14 @@
 		<atom:link href="/tags/plot/" rel="self" type="application/rss+xml" />
 		
 		<item>
+			<title>How to choose a satisfying board game? Part I</title>
+			<link>/post/how-to-choose-a-satisfying-board-game-part-i/</link>
+			<pubDate>Wed, 15 Jul 2020 00:00:00 +0000</pubDate>
+			<guid>/post/how-to-choose-a-satisfying-board-game-part-i/</guid>
+			<description>Being a board game enthusiast, I always introduce board games to my friends. Some of them might be another enthusiast, while some might have an idea that the board game is equivalent to chess. Most of the time I use my instinct and my understanding of the taste of my friends to decide which game would provide the greatest fun for us. However, it can be very biased due to my personal preference.</description>
+		</item>
+      	
+		<item>
 			<title>Case study: The ethics of using hacked data: Patreons data hack and academic data standards</title>
 			<link>/post/case-study-the-ethics-of-using-hacked-data-patreon-s-data-hack-and-academic-data-standards/</link>
 			<pubDate>Wed, 10 Jun 2020 00:00:00 +0000</pubDate>
@@ -27,6 +35,16 @@
 			<pubDate>Fri, 05 Jun 2020 00:00:00 +0000</pubDate>
 			<guid>/post/tips-to-build-the-first-post-using-blogdown/</guid>
 			<description>Yeah! I start blogging with blogdown finally! It took a longer time than I expected. Although some Youtubers are teaching how to build it within 15 min, I have used much more than that! I guess it is normal for someone like me without much experience with Hugo, Netlify, and markdowns. Since there are plenty of resources online, I would recommend reading the post from Martin Frigaard among all I read.</description>
+		</item>
+      	
+		<item>
+			<title>Test</title>
+			<link>/post/test/</link>
+			<pubDate>Wed, 01 Jan 2020 00:00:00 +0000</pubDate>
+			<guid>/post/test/</guid>
+			<description>R Markdown This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.
+You can embed an R code chunk like this:
+summary(cars) ## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 26.00 ## Median :15.0 Median : 36.00 ## Mean :15.4 Mean : 42.98 ## 3rd Qu.</description>
 		</item>
       	
 		<item>

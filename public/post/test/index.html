@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+<title>Test</title>
+
+
+  
+
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="alternate" type="application/rss+xml" href="/index.xml" title="James Blog">
+
+<link id="dark-mode-theme" rel="stylesheet" href="/css/dark.css" />
+<link rel="stylesheet" href="/fontawesome/css/all.min.css" />
+
+<script src="/js/bundle.js"></script>
+<script src="/js/instantpage.js" type="module" defer></script>
+<meta name="generator" content="Hugo 0.70.0" />
+  </head>
+  <body>
+    
+  
+
+
+
+
+  <header>
+    <nav class="navbar">
+  <div class="nav">
+    
+      <a href="/" class="nav-logo">
+      <img src="/images/icon.png"
+           width="50"
+           height="50"
+           alt="Logo">
+      </a>
+    
+
+    <ul class="nav-links">
+      
+        
+          <li><a href="/about/" name="About"><i class="fas fa-user fa-lg"></i></a></li>
+        
+      
+        
+          <li><a href="/tags" name="Tags"><i class="fas fa-tag fa-lg"></i></a></li>
+        
+      
+        
+          <li><a href="/search" name="Search"><i class="fas fa-search fa-lg"></i></a></li>
+        
+      
+    </ul>
+  </div>
+</nav>
+
+    <div class="intro-header">
+      <div class="container">
+        <div class="post-heading">
+          
+            <h1>Test</h1>
+          
+          
+            <span class="meta-post">
+  <i class="fa fa-calendar-alt"></i>&nbsp;Jan 1, 2020
+  
+</span>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+  <div class="container" role="main">
+    <article class="article" class="blog-post">
+      
+    <h1 id="r-markdown">R Markdown</h1>
+<p>This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <a href="http://rmarkdown.rstudio.com">http://rmarkdown.rstudio.com</a>.</p>
+<p>You can embed an R code chunk like this:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">summary</span>(cars)
+</code></pre></div><pre><code>##      speed           dist       
+##  Min.   : 4.0   Min.   :  2.00  
+##  1st Qu.:12.0   1st Qu.: 26.00  
+##  Median :15.0   Median : 36.00  
+##  Mean   :15.4   Mean   : 42.98  
+##  3rd Qu.:19.0   3rd Qu.: 56.00  
+##  Max.   :25.0   Max.   :120.00
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">fit <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">lm</span>(dist <span style="color:#f92672">~</span> speed, data <span style="color:#f92672">=</span> cars)
+fit
+</code></pre></div><pre><code>## 
+## Call:
+## lm(formula = dist ~ speed, data = cars)
+## 
+## Coefficients:
+## (Intercept)        speed  
+##     -17.579        3.932
+</code></pre><h1 id="including-plots">Including Plots</h1>
+<p>You can also embed plots. See Figure <!-- raw HTML omitted -->1<!-- raw HTML omitted --> for example:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">par</span>(mar <span style="color:#f92672">=</span> <span style="color:#a6e22e">c</span>(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>))
+<span style="color:#a6e22e">pie</span>(
+  <span style="color:#a6e22e">c</span>(<span style="color:#ae81ff">280</span>, <span style="color:#ae81ff">60</span>, <span style="color:#ae81ff">20</span>),
+  <span style="color:#a6e22e">c</span>(<span style="color:#e6db74">&#39;Sky&#39;</span>, <span style="color:#e6db74">&#39;Sunny side of pyramid&#39;</span>, <span style="color:#e6db74">&#39;Shady side of pyramid&#39;</span>),
+  col <span style="color:#f92672">=</span> <span style="color:#a6e22e">c</span>(<span style="color:#e6db74">&#39;#0292D8&#39;</span>, <span style="color:#e6db74">&#39;#F7EA39&#39;</span>, <span style="color:#e6db74">&#39;#C4B632&#39;</span>),
+  init.angle <span style="color:#f92672">=</span> <span style="color:#ae81ff">-50</span>, border <span style="color:#f92672">=</span> <span style="color:#66d9ef">NA</span>
+)
+</code></pre></div><!-- raw HTML omitted -->
+<figure>
+    <img src="/post/2020-01-01-test.en_files/pie-1.png" width="500"/> <figcaption>
+            <h4>Pie</h4>
+        </figcaption>
+</figure>
+
+
+
+
+      
+    </article>
+    
+    
+  </div>
+
+    <footer>
+  <div class="container">
+    <p class="credits copyright">
+      <a href="/about">hugo author</a>
+      &nbsp;&copy;
+      2020
+
+      
+        &nbsp;/&nbsp;
+        <a href="/">James Blog</a>
+      
+
+      &nbsp;&ndash;&nbsp;
+      <i class="fas fa-moon" id="dark-mode-toggle"></i>
+
+      <p class="credits theme-by">
+        Powered By <a href="https://gohugo.io">Hugo</a>&nbsp;Theme <a href="https://github.com/matsuyoshi30/harbor">Harbor</a>
+      </p>
+    </p>
+  </div>
+</footer>
+
+  </body>
+</html>
