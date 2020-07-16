@@ -155,7 +155,7 @@ annual_rating  +
 {{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-6-1.png" title="" width="600">}}
 
 The number of publish increase exponentially in recent years. It is also a strong evidence that the marketing is expanding very fast and why the rating range is getting larger. There are fewer pulished recorded after 2015. It is possibly because the time lag between publishing and reaching to the players. Considering the market provides more than 1,000 games in the past few years, it does take some time to get enough users to rate, especially not all players would rate for the games they tried.
-```{r, echo=FALSE}
+```{r fig5, fig.cap='', tidy=FALSE}
 ggplot(df %>% filter(yearpublished >=1985) %>% group_by(yearpublished) %>% summarise(n=n())) +
   geom_point(aes(x=yearpublished, y=n, color = as.factor(yearpublished))) +
   theme(legend.position = "none") +
@@ -179,7 +179,7 @@ corrplot.mixed(cor(df %>% filter(yearpublished >=1985) %>%
   mar=c(0,0,2,0))
 ```
 
-{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-8-1.png" title="" width="600">}}
+{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-9-1.png" title="" width="600">}}
 
 ### Minimum age - minimum age from 12-14 has the highest rating
 
@@ -208,7 +208,7 @@ ggplot(df)+
   ggtitle("Fig.7: Histogram of minimum age group")
 ```
 
-{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-9-1.png" title="" width="600">}}
+{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-10-1.png" title="" width="600">}}
 
 According to the plot, it is easy to see that <6 & 15+ has a lower rating than other. It reviews that the correlation between minimum age and rating may not be linear.
 
@@ -239,7 +239,7 @@ age_rating +
                 vjust = -1, hjust = -0.01), size = 3, color="black")
 ```
 
-{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-10-1.png" title="" width="600">}}
+{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-12-1.png" title="" width="600">}}
 
 ### Number of players - Most are designed for 2-4 players. Irrelevant to rating.
 
@@ -252,6 +252,7 @@ It is quite suprise to find out that quite a number of games allowing more than 
 table(df[df$maxplayers>10,"maxplayers"])
 ```
 Besides, most of the games are designed for 2, 2-4 or 2-6 players without any surprise.
+
 ```{r, echo=FALSE, message=FALSE}
 ggplot(df %>% select(maxplayers, minplayers) %>%
   filter(!is.na(minplayers), !is.na(maxplayers)) %>%
@@ -270,7 +271,7 @@ ggplot(df %>% select(maxplayers, minplayers) %>%
   ggtitle("Fig.9: Distribution of players avaliable, excluding max 5%")
 ```
 
-{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-8-1.png" title="" width="600">}}
+{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-14-1.png" title="" width="600">}}
 
 It doesn't seem to have a relationship between minimum and maximum players.
 ```{r, echo=FALSE}
@@ -283,7 +284,7 @@ ggplot(df %>% filter(!is.na(minplayers), !is.na(maxplayers)) %>%
   ggtitle("Fig.10: Rating according to min & max players")
 ```
 
-{{< figure src="" title="" width="600">}}
+{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-16-1.png" title="" width="600">}}
 
 ### Playing time - Longer seems to be better
 
@@ -305,6 +306,8 @@ As stated playing time is only an estimation of actual time, it is better and si
 |Normal | 60 - 119 min|
 |Long | 120-179 min|
 |Extreme |180 min or longer|
+
+
 ```{r, warning=FALSE, message=FALSE}
  df <- df %>% mutate(duration = ifelse(playingtime < 30, "Instant",
                            ifelse(playingtime < 60, "Short",
@@ -330,7 +333,7 @@ ggplot(df) +
   ggtitle("Fig.11: Counts of duration groups")
 ```
 
-{{< figure src="" title="" width="600">}}
+{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-19-1.png" title="" width="600">}}
 
 Fig.12 shows us that the rating has a similar effect as age group: rating increases when the duration is longer and seems to reduce when the duration is extreme. From the relation with weight we know that complicated game has a higher rating and it is hard to create a complicated one within a short playing time. Meanwhile, like watching a movie, it is more possible to get bored when it is extreme long. 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
@@ -358,4 +361,5 @@ ggplot(df,
                 vjust = -1, hjust = -0.01), size = 3, color="black")
 ```
 
-{{< figure src="" title="" width="600">}}
+{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-21-1.png" title="" width="600">}}
+

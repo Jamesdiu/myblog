@@ -307,6 +307,7 @@ As stated playing time is only an estimation of actual time, it is better and si
 |Long | 120-179 min|
 |Extreme |180 min or longer|
 
+
 ```{r, warning=FALSE, message=FALSE}
  df <- df %>% mutate(duration = ifelse(playingtime < 30, "Instant",
                            ifelse(playingtime < 60, "Short",
@@ -361,5 +362,4 @@ ggplot(df,
 ```
 
 {{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-21-1.png" title="" width="600">}}
-
 
