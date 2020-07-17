@@ -1,7 +1,7 @@
 ---
 title: How to choose a satisfying board game? Part I
 author: James Diu
-date: '2020-07-15'
+date: '2020-06-30'
 slug: how-to-choose-a-satisfying-board-game-part-i
 categories:
   - R
@@ -13,10 +13,10 @@ toc: no
 
 {{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/catan_GOT.png" title=""  width="600" >}}
 
-Being a board game enthusiast, I always introduce board games to my friends. Some of them might be another enthusiast, while some might have an idea that the board game is equivalent to chess. Most of the time I use my instinct and my understanding of the taste of my friends to decide which game would provide the greatest fun for us. However, it can be very biased due to my personal preference. On the other hand, I love to collect *different* board games. I hope my collection can be diverse enough to serve all kinds of my friends' backgrounds and preferences. So how should I choose a game to meet general preference? And which game should I select, such that it will enrich my collection and make sure it could be fun? (It is quite upset when you find out a new game is boring...) Learning more about the general preference statistically would be a nice solution.
+Being a board game enthusiast, I always introduce board games to my friends. Some of them might be another enthusiast, while some might have an idea that the board game is equivalent to chess. Most of the time I use my instinct to estimate the favor of my friends and decide which game would be the perfect match. However, this can be very biased due to my own preference. On the other hand, I love to collect *different* board games. I hope my collection can be diverse enough to serve all kinds of my friends' backgrounds and preferences. So how should I choose a game to meet these targets? And which game should I select, such that it will enrich my collection and make sure it could be fun? (It is quite upset when you are bored by a new game you just bought...) Learning more about the general preference statistically would be a nice solution.
 
 ### Data description
-Regarding the data of board games, [BoardGameGeek(BGG)](https://boardgamegeek.com/) is undoubtedly the biggest source. However, I am not going to pull the data directly. Instead, I will use the data from an interesting [post](https://dvatvani.github.io/BGG-Analysis-Part-1.html) about the trend and rating bias on BGG in 2018, which also come from BGG. Although it is not up-to-date data, I think it can still give us some insights and suggestions.
+Regarding the data of board games, [BoardGameGeek(BGG)](https://boardgamegeek.com/) is undoubtedly the biggest source. However, I am not going to pull the data directly. Instead, I will use the data from an interesting [post by Dinesh Vatvani](https://dvatvani.github.io/BGG-Analysis-Part-1.html) about the trend and rating bias on BGG in 2018. Although it is not up-to-date data, I think it can still give us some insights and suggestions.
 
 
 ```r
@@ -155,7 +155,7 @@ nrow(df[df$maxplayers>10,"maxplayers"])
 ```
 ## [1] 1039
 ```
-It is quite suprise to find out that quite a number of games allowing more than 100 players, 3 of them even 1000.  
+It is quite suprise to find out that quite a number of games allowing more than 100 players, 3 of them even 1000. Since no game requires at least 10 players, I combined all games with maximum player equal or more 10 together in the following plots for convenience issue. Meanwhile, I also exclude the combination with less than 30 games to prevent small sample bias.
 
 ```r
 table(df[df$maxplayers>10,"maxplayers"])
@@ -168,16 +168,18 @@ table(df[df$maxplayers>10,"maxplayers"])
 ##  38  40  41  42  45  47  48  50  52  61  64  68  75  99 100 127 200 362 999 
 ##   1   3   1   1   1   1   1   4   2   1   1   4   3 103   8   1   1   1   3
 ```
-Besides, most of the games are designed for 2, 2-4 or 2-6 players without any surprise.
+Most of the games are designed for 2, 2-4 or 2-6 players without any surprise.
 
-<img src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/figure-html/unnamed-chunk-13-1.png" width="672" />
+<img src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/figure-html/fig9_player_counts-1.png" width="672" />
 
-{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-14-1.png" title="" width="600">}}
+{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/fig9_nplayer_dist.png" title="" width="600">}}
 
-It doesn't seem to have a relationship between minimum and maximum players.
-<img src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/figure-html/unnamed-chunk-14-1.png" width="672" />
+It doesn't seem to have any obvious relationship between ratings and the number of players, since the average ratings are so close to each other. 
 
-{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-16-1.png" title="" width="600">}}
+
+<img src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/figure-html/fig10_playerno_ratings-1.png" width="672" />
+
+{{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/fig10_nplayer_rate.png" title="" width="700">}}
 
 ### Playing time - Longer seems to be better
 
@@ -228,12 +230,12 @@ As stated playing time is only an estimation of actual time, it is better and si
          duration = factor(duration, levels = c("Instant", "Short", "Normal", "Long", "Extreme")))
 duration_group <- df %>% group_by(duration) %>% summarise(n=n())
 ```
-<img src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/figure-html/unnamed-chunk-18-1.png" width="672" />
+<img src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/figure-html/unnamed-chunk-16-1.png" width="672" />
 
 {{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-19-1.png" title="" width="600">}}
 
 Fig.12 shows us that the rating has a similar effect as age group: rating increases when the duration is longer and seems to reduce when the duration is extreme. From the relation with weight we know that complicated game has a higher rating and it is hard to create a complicated one within a short playing time. Meanwhile, like watching a movie, it is more possible to get bored when it is extreme long. 
-<img src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/figure-html/unnamed-chunk-19-1.png" width="672" />
+<img src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/figure-html/unnamed-chunk-17-1.png" width="672" />
 
 {{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-21-1.png" title="" width="600">}}
 

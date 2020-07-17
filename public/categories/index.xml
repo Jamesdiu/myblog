@@ -9,16 +9,24 @@
 		
 		<managingEditor>Page(/categories) (hugo author)</managingEditor>
     	
-  		<lastBuildDate>Wed, 15 Jul 2020 00:00:00 +0000</lastBuildDate>
+  		<lastBuildDate>Thu, 16 Jul 2020 00:00:00 +0000</lastBuildDate>
 		
 		<atom:link href="/categories/" rel="self" type="application/rss+xml" />
 		
 		<item>
+			<title>How to choose a satisfying board game? Part II</title>
+			<link>/post/how-to-choose-a-satisfying-board-game-part-ii/</link>
+			<pubDate>Thu, 16 Jul 2020 00:00:00 +0000</pubDate>
+			<guid>/post/how-to-choose-a-satisfying-board-game-part-ii/</guid>
+			<description>head(df) ## # A tibble: 6 x 13 ## id type name yearpublished age_group duration weight users_rated ## &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;fct&amp;gt; &amp;lt;fct&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; ## 1 1 0 Die … 1986 12-14 Extreme 4.35 4598 ## 2 10 0 Elfe… 1998 9-11 Normal 2.16 6981 ## 3 1000 0 Coro… 1974 12-14 Short 2.5 37 ## 4 100015 0 Zoom… 2011 6-8 Short 2 36 ## 5 100036 1 Get … 2011 6-8 Short 2 36 ## 6 10008 0 Rifl… 1973 12-14 Normal 2.</description>
+		</item>
+      	
+		<item>
 			<title>How to choose a satisfying board game? Part I</title>
 			<link>/post/how-to-choose-a-satisfying-board-game-part-i/</link>
-			<pubDate>Wed, 15 Jul 2020 00:00:00 +0000</pubDate>
+			<pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
 			<guid>/post/how-to-choose-a-satisfying-board-game-part-i/</guid>
-			<description>Being a board game enthusiast, I always introduce board games to my friends. Some of them might be another enthusiast, while some might have an idea that the board game is equivalent to chess. Most of the time I use my instinct and my understanding of the taste of my friends to decide which game would provide the greatest fun for us. However, it can be very biased due to my personal preference.</description>
+			<description>Being a board game enthusiast, I always introduce board games to my friends. Some of them might be another enthusiast, while some might have an idea that the board game is equivalent to chess. Most of the time I use my instinct to estimate the favor of my friends and decide which game would be the perfect match. However, this can be very biased due to my own preference.</description>
 		</item>
       	
 		<item>
@@ -86,16 +94,6 @@ pectora summo.&lt;/p&gt;</description>
 			<pubDate>Tue, 05 Mar 2019 00:00:00 +0000</pubDate>
 			<guid>/post/emoji-support/</guid>
 			<description>&lt;p&gt;Emoji can be enabled in a Hugo project in a number of ways.&lt;/p&gt;</description>
-		</item>
-      	
-		<item>
-			<title>Hello R Markdown</title>
-			<link>/post/2015-07-23-r-rmarkdown/</link>
-			<pubDate>Thu, 23 Jul 2015 21:13:14 -0500</pubDate>
-			<guid>/post/2015-07-23-r-rmarkdown/</guid>
-			<description>R Markdown This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.
-You can embed an R code chunk like this:
-summary(cars) ## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 26.00 ## Median :15.0 Median : 36.00 ## Mean :15.4 Mean : 42.98 ## 3rd Qu.</description>
 		</item>
       	
 	</channel>
