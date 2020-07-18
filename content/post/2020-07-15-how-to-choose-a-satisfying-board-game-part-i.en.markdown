@@ -104,16 +104,6 @@ Fig.4 shows that the average BGG rating raises slightly over the years. However,
 {{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-6-1.png" title="" width="600">}}
 
 The number of publish increase exponentially in recent years. It is also a strong evidence that the marketing is expanding very fast and why the rating range is getting larger. There are fewer pulished recorded after 2015. It is possibly because the time lag between publishing and reaching to the players. Considering the market provides more than 1,000 games in the past few years, it does take some time to get enough users to rate, especially not all players would rate for the games they tried.
-
-```r
-ggplot(df %>% filter(yearpublished >=1985) %>% group_by(yearpublished) %>% summarise(n=n())) +
-  geom_point(aes(x=yearpublished, y=n, color = as.factor(yearpublished))) +
-  theme(legend.position = "none") +
-  scale_x_continuous(name = "")+
-  scale_y_continuous(name = "")+
-  ggtitle("Fig.5: Number of game published along year (user rated >=30)")
-```
-
 <img src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/figure-html/fig5-1.png" width="672" />
 
 {{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-7-1.png" title="" width="600">}}

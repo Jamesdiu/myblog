@@ -9,6 +9,7 @@ categories:
 tags: []
 backtotop: no
 toc: no
+draft: TRUE
 ---
 
 ```{r, include=FALSE}
@@ -22,7 +23,9 @@ library(treemap)
 library(entropy)
 library(tidyselect)
 ```
-```{r data_cleaning, include=FALSE}
+
+
+```{r data_cleaning, message=FALSE}
 games_Jan2018 <- read_csv("data/games_Jan2018.csv")
 df <- games_Jan2018
 # These columns should have missing value instead of 0, replace with NA
@@ -69,7 +72,89 @@ df<- df %>%
          types, categories, mechanics, designers)
 ```
 
+
 ```{r}
-head(df)
+mec_tags <- cSplit(df %>% select(id, mechanics), 
+                   splitCols = "mechanics",
+                   direction = "long")
+length(unique(mec_tags$mechanics))
+```
+```{r fig1_nmech_pie, echo=FALSE}
+library(scales)
+ggplot(mec_tags %>%
+         group_by(id) %>%
+         summarise(n_mech = n()) %>%
+         group_by(n_mech) %>%
+         summarise(count = n()) %>%
+         arrange(desc(n_mech)) %>%
+         mutate(n_mech = as.factor(n_mech),
+                total = sum(count),
+                prop = round(count / total * 100,2),
+                ypos = cumsum(prop) - 0.5*prop),
+       aes(x="", y=prop, fill=n_mech))+
+  geom_bar(stat = "identity", width=1) +
+  coord_polar("y", start = 0) +
+  theme_void()+
+  # geom_text(aes(y = ifelse(ypos>0.05, paste(ypos,"%"),""), 
+  #               label = prop))+
+  geom_text(aes(y = ypos, 
+                label = ifelse(prop>5, paste(prop,"%"),"")),
+            size = 3, hjust = 0.3)+
+  ggtitle("Fig.1: Pie chart of the number of mechanics used")
+```
+
+```{r fig2_nmech_treemap, echo = FALSE}
+n_mech_treemap <- treemap(as.data.frame(table(mec_tags$mechanics)), 
+                        index = "Var1", vSize = "Freq",
+                        title = "Fig.2: Mechanics frequency - Boardgames")
+```
+
+
+```{r fig3_mechrate_pie, echo=FALSE}
+  ggplot(
+mec_tags %>% left_join(df[c("id","users_rated", "BGG_rating")], by = "id") %>%
+  filter(!is.na(mechanics)) %>%
+  group_by(mechanics) %>%
+  summarise(users_rated = mean(users_rated),
+            BGG_mean = mean(BGG_rating),
+            BGG_sd = sd(BGG_rating),
+            count = n()) %>% 
+  arrange(desc(BGG_mean)),
+aes(x=reorder(mechanics,BGG_mean), y=BGG_mean, fill = count)
+) +
+  geom_bar(stat ="identity")+
+  geom_errorbar(aes(ymin=BGG_mean-1.96*BGG_sd, ymax=BGG_mean+1.96*BGG_sd), width=.2) +
+  scale_y_continuous(breaks = seq(1:7)) +
+  coord_flip() +
+  theme(axis.text.y = element_text(size = 6),
+        axis.title.y = element_blank())+
+  ggtitle("Fig.3: Averge BGG rating of mechanics")
+```
+
+
+```{r}
+mec_dummy <- dcast(mec_tags, id ~ mechanics, function(x) 1, fill = 0) %>%
+  left_join(df[c("id","BGG_rating")], by = "id")
+
+fit <- lm(BGG_rating~.,data = mec_dummy %>% select(-id) %>%
+            filter(BGG_rating != 0))
+fits <- as.data.frame(fit$coefficients)
+fits$mechanics <- as.factor(rownames(fits))
+colnames(fits) <- c("coef","mechanics")
+```
+
+
+```{r}
+ggplot(fits[-1,] %>% filter(mechanics != "`NA`"), aes(x=reorder(mechanics,coef),y=coef,fill=coef))+
+  geom_bar(stat="identity")+
+  coord_flip()+
+  labs(title="Linear Model Coefficients for mechanics against rating",
+       y="Coefficients",x="Mechanic")+
+  scale_fill_gradient(low="red", high="green")+
+  theme_light() +
+  theme(axis.text.y = element_text(size = 6),
+        axis.title.y = element_blank())
+
+fits
 ```
 

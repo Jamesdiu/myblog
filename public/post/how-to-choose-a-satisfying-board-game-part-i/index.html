@@ -147,14 +147,8 @@ df <span style="color:#f92672">&lt;-</span> games_Jan2018
     <img src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-6-1.png" width="600"/> 
 </figure>
 
-<p>The number of publish increase exponentially in recent years. It is also a strong evidence that the marketing is expanding very fast and why the rating range is getting larger. There are fewer pulished recorded after 2015. It is possibly because the time lag between publishing and reaching to the players. Considering the market provides more than 1,000 games in the past few years, it does take some time to get enough users to rate, especially not all players would rate for the games they tried.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">ggplot</span>(df <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">filter</span>(yearpublished <span style="color:#f92672">&gt;=</span><span style="color:#ae81ff">1985</span>) <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">group_by</span>(yearpublished) <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">summarise</span>(n<span style="color:#f92672">=</span><span style="color:#a6e22e">n</span>())) <span style="color:#f92672">+</span>
-  <span style="color:#a6e22e">geom_point</span>(<span style="color:#a6e22e">aes</span>(x<span style="color:#f92672">=</span>yearpublished, y<span style="color:#f92672">=</span>n, color <span style="color:#f92672">=</span> <span style="color:#a6e22e">as.factor</span>(yearpublished))) <span style="color:#f92672">+</span>
-  <span style="color:#a6e22e">theme</span>(legend.position <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;none&#34;</span>) <span style="color:#f92672">+</span>
-  <span style="color:#a6e22e">scale_x_continuous</span>(name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>)<span style="color:#f92672">+</span>
-  <span style="color:#a6e22e">scale_y_continuous</span>(name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>)<span style="color:#f92672">+</span>
-  <span style="color:#a6e22e">ggtitle</span>(<span style="color:#e6db74">&#34;Fig.5: Number of game published along year (user rated &gt;=30)&#34;</span>)
-</code></pre></div><p><!-- raw HTML omitted --></p>
+<p>The number of publish increase exponentially in recent years. It is also a strong evidence that the marketing is expanding very fast and why the rating range is getting larger. There are fewer pulished recorded after 2015. It is possibly because the time lag between publishing and reaching to the players. Considering the market provides more than 1,000 games in the past few years, it does take some time to get enough users to rate, especially not all players would rate for the games they tried.
+<!-- raw HTML omitted --></p>
 <figure>
     <img src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-7-1.png" width="600"/> 
 </figure>

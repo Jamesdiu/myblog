@@ -86,18 +86,139 @@
   <div class="container" role="main">
     <article class="article" class="blog-post">
       
-    <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">head</span>(df)
-</code></pre></div><pre><code>## # A tibble: 6 x 13
-##       id  type name  yearpublished age_group duration weight users_rated
-##    &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;         &lt;dbl&gt; &lt;fct&gt;     &lt;fct&gt;     &lt;dbl&gt;       &lt;dbl&gt;
-## 1      1     0 Die …          1986 12-14     Extreme    4.35        4598
-## 2     10     0 Elfe…          1998 9-11      Normal     2.16        6981
-## 3   1000     0 Coro…          1974 12-14     Short      2.5           37
-## 4 100015     0 Zoom…          2011 6-8       Short      2             36
-## 5 100036     1 Get …          2011 6-8       Short      2             36
-## 6  10008     0 Rifl…          1973 12-14     Normal     2.25          39
-## # … with 5 more variables: BGG_rating &lt;dbl&gt;, types &lt;chr&gt;, categories &lt;chr&gt;,
-## #   mechanics &lt;chr&gt;, designers &lt;chr&gt;
+    <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">games_Jan2018 <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">read_csv</span>(<span style="color:#e6db74">&#34;data/games_Jan2018.csv&#34;</span>)
+df <span style="color:#f92672">&lt;-</span> games_Jan2018
+<span style="color:#75715e"># These columns should have missing value instead of 0, replace with NA</span>
+list <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">c</span>(<span style="color:#e6db74">&#34;minplayers&#34;</span>, <span style="color:#e6db74">&#34;maxplayers&#34;</span>, <span style="color:#e6db74">&#34;playingtime&#34;</span>,<span style="color:#e6db74">&#34;minplaytime&#34;</span>, <span style="color:#e6db74">&#34;maxplaytime&#34;</span>)
+df[list][df[list]<span style="color:#f92672">==</span><span style="color:#ae81ff">0</span>]<span style="color:#f92672">&lt;-</span><span style="color:#66d9ef">NA</span>
+
+<span style="color:#75715e"># Update data by visiting BGG for accurate information</span>
+df[df<span style="color:#f92672">$</span>id<span style="color:#f92672">==</span><span style="color:#ae81ff">234768</span>,]<span style="color:#f92672">$</span>minplayers <span style="color:#f92672">&lt;-</span> <span style="color:#ae81ff">2</span>
+
+df[df<span style="color:#f92672">$</span>id<span style="color:#f92672">==</span><span style="color:#ae81ff">235285</span>,]<span style="color:#f92672">$</span>minplayers <span style="color:#f92672">&lt;-</span> <span style="color:#ae81ff">2</span>
+df[df<span style="color:#f92672">$</span>id<span style="color:#f92672">==</span><span style="color:#ae81ff">235285</span>,]<span style="color:#f92672">$</span>maxplayers <span style="color:#f92672">&lt;-</span> <span style="color:#ae81ff">6</span>
+
+df[df<span style="color:#f92672">$</span>id<span style="color:#f92672">==</span><span style="color:#ae81ff">75294</span>,]<span style="color:#f92672">$</span>minplayers <span style="color:#f92672">&lt;-</span> <span style="color:#ae81ff">2</span>
+df[df<span style="color:#f92672">$</span>id<span style="color:#f92672">==</span><span style="color:#ae81ff">75294</span>,]<span style="color:#f92672">$</span>maxplayers <span style="color:#f92672">&lt;-</span> <span style="color:#ae81ff">20</span>
+
+df<span style="color:#f92672">&lt;-</span> df <span style="color:#f92672">%&gt;%</span> 
+  <span style="color:#75715e"># filter games with BGG rating</span>
+  <span style="color:#a6e22e">filter</span>(users_rated<span style="color:#f92672">&gt;=</span><span style="color:#ae81ff">30</span>) <span style="color:#f92672">%&gt;%</span> 
+  <span style="color:#a6e22e">mutate</span>(
+    <span style="color:#75715e"># assign expansion as 1, boardgame as 0</span>
+    type <span style="color:#f92672">=</span> <span style="color:#a6e22e">ifelse</span>(type <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;boardgame&#34;</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>),
+    <span style="color:#75715e"># switch the value for those minplaytime &gt; maxplaytime </span>
+    maxplaytime <span style="color:#f92672">=</span> <span style="color:#a6e22e">ifelse</span>(maxplaytime<span style="color:#f92672">&lt;</span>minplaytime, minplaytime, maxplaytime),
+    minplaytime <span style="color:#f92672">=</span> <span style="color:#a6e22e">ifelse</span>(minplaytime<span style="color:#f92672">&lt;</span>playingtime, minplaytime, playingtime),
+    <span style="color:#75715e"># create age group</span>
+    age_group <span style="color:#f92672">=</span> <span style="color:#a6e22e">ifelse</span>(minage<span style="color:#f92672">&gt;</span><span style="color:#ae81ff">14</span>, <span style="color:#e6db74">&#34;15+&#34;</span>,
+                       <span style="color:#a6e22e">ifelse</span>(minage<span style="color:#f92672">&gt;</span><span style="color:#ae81ff">11</span>, <span style="color:#e6db74">&#34;12-14&#34;</span>,
+                              <span style="color:#a6e22e">ifelse</span>(minage<span style="color:#f92672">&gt;</span><span style="color:#ae81ff">8</span>, <span style="color:#e6db74">&#34;9-11&#34;</span>,
+                                     <span style="color:#a6e22e">ifelse</span>(minage<span style="color:#f92672">&gt;</span><span style="color:#ae81ff">5</span>, <span style="color:#e6db74">&#34;6-8&#34;</span>,<span style="color:#e6db74">&#34;&lt;6&#34;</span>)))),
+    age_group <span style="color:#f92672">=</span> <span style="color:#a6e22e">factor</span>(age_group, levels <span style="color:#f92672">=</span> <span style="color:#a6e22e">c</span>(<span style="color:#e6db74">&#34;&lt;6&#34;</span>, <span style="color:#e6db74">&#34;6-8&#34;</span>, <span style="color:#e6db74">&#34;9-11&#34;</span>,<span style="color:#e6db74">&#34;12-14&#34;</span>,<span style="color:#e6db74">&#34;15+&#34;</span>)),
+    <span style="color:#75715e"># create duration group</span>
+    duration <span style="color:#f92672">=</span> <span style="color:#a6e22e">ifelse</span>(playingtime <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">30</span>, <span style="color:#e6db74">&#34;Instant&#34;</span>,
+                      <span style="color:#a6e22e">ifelse</span>(playingtime <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">60</span>, <span style="color:#e6db74">&#34;Short&#34;</span>,
+                             <span style="color:#a6e22e">ifelse</span>(playingtime <span style="color:#f92672">&lt;</span><span style="color:#ae81ff">120</span>, <span style="color:#e6db74">&#34;Normal&#34;</span>,
+                                    <span style="color:#a6e22e">ifelse</span>(playingtime <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">180</span>, <span style="color:#e6db74">&#34;Long&#34;</span>,
+                                           <span style="color:#a6e22e">ifelse</span>(<span style="color:#a6e22e">is.na</span>(playingtime),
+                                                  <span style="color:#66d9ef">NA</span>,<span style="color:#e6db74">&#34;Extreme&#34;</span>))))),
+    duration <span style="color:#f92672">=</span> <span style="color:#a6e22e">factor</span>(duration, 
+                      levels <span style="color:#f92672">=</span> <span style="color:#a6e22e">c</span>(<span style="color:#e6db74">&#34;Instant&#34;</span>, <span style="color:#e6db74">&#34;Short&#34;</span>, <span style="color:#e6db74">&#34;Normal&#34;</span>, <span style="color:#e6db74">&#34;Long&#34;</span>, <span style="color:#e6db74">&#34;Extreme&#34;</span>))
+    ) <span style="color:#f92672">%&gt;%</span>
+  <span style="color:#75715e"># remove useless columns</span>
+  <span style="color:#a6e22e">select</span>(id, type, name, yearpublished, age_group, duration, 
+         weight <span style="color:#f92672">=</span> average_weight, users_rated, BGG_rating <span style="color:#f92672">=</span> bayes_average_rating,
+         types, categories, mechanics, designers)
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">mec_tags <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">cSplit</span>(df <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">select</span>(id, mechanics), 
+                   splitCols <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;mechanics&#34;</span>,
+                   direction <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;long&#34;</span>)
+<span style="color:#a6e22e">length</span>(<span style="color:#a6e22e">unique</span>(mec_tags<span style="color:#f92672">$</span>mechanics))
+</code></pre></div><pre><code>## [1] 52
+</code></pre><pre><code>## 
+## Attaching package: 'scales'
+</code></pre><pre><code>## The following object is masked from 'package:purrr':
+## 
+##     discard
+</code></pre><pre><code>## The following object is masked from 'package:readr':
+## 
+##     col_factor
+</code></pre><p><!-- raw HTML omitted --></p>
+<p><!-- raw HTML omitted --></p>
+<p><!-- raw HTML omitted --></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">mec_dummy <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">dcast</span>(mec_tags, id <span style="color:#f92672">~</span> mechanics, <span style="color:#a6e22e">function</span>(x) <span style="color:#ae81ff">1</span>, fill <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>) <span style="color:#f92672">%&gt;%</span>
+  <span style="color:#a6e22e">left_join</span>(df<span style="color:#a6e22e">[c</span>(<span style="color:#e6db74">&#34;id&#34;</span>,<span style="color:#e6db74">&#34;BGG_rating&#34;</span>)], by <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;id&#34;</span>)
+</code></pre></div><pre><code>## Using 'mechanics' as value column. Use 'value.var' to override
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">fit <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">lm</span>(BGG_rating<span style="color:#f92672">~</span>.,data <span style="color:#f92672">=</span> mec_dummy <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">select</span>(<span style="color:#f92672">-</span>id) <span style="color:#f92672">%&gt;%</span>
+            <span style="color:#a6e22e">filter</span>(BGG_rating <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>))
+fits <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">as.data.frame</span>(fit<span style="color:#f92672">$</span>coefficients)
+fits<span style="color:#f92672">$</span>mechanics <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">as.factor</span>(<span style="color:#a6e22e">rownames</span>(fits))
+<span style="color:#a6e22e">colnames</span>(fits) <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">c</span>(<span style="color:#e6db74">&#34;coef&#34;</span>,<span style="color:#e6db74">&#34;mechanics&#34;</span>)
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">ggplot</span>(fits[<span style="color:#ae81ff">-1</span>,] <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">filter</span>(mechanics <span style="color:#f92672">!=</span> <span style="color:#e6db74">&#34;`NA`&#34;</span>), <span style="color:#a6e22e">aes</span>(x<span style="color:#f92672">=</span><span style="color:#a6e22e">reorder</span>(mechanics,coef),y<span style="color:#f92672">=</span>coef,fill<span style="color:#f92672">=</span>coef))<span style="color:#f92672">+</span>
+  <span style="color:#a6e22e">geom_bar</span>(stat<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;identity&#34;</span>)<span style="color:#f92672">+</span>
+  <span style="color:#a6e22e">coord_flip</span>()<span style="color:#f92672">+</span>
+  <span style="color:#a6e22e">labs</span>(title<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Linear Model Coefficients for mechanics against rating&#34;</span>,
+       y<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Coefficients&#34;</span>,x<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Mechanic&#34;</span>)<span style="color:#f92672">+</span>
+  <span style="color:#a6e22e">scale_fill_gradient</span>(low<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;red&#34;</span>, high<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;green&#34;</span>)<span style="color:#f92672">+</span>
+  <span style="color:#a6e22e">theme_light</span>() <span style="color:#f92672">+</span>
+  <span style="color:#a6e22e">theme</span>(axis.text.y <span style="color:#f92672">=</span> <span style="color:#a6e22e">element_text</span>(size <span style="color:#f92672">=</span> <span style="color:#ae81ff">6</span>),
+        axis.title.y <span style="color:#f92672">=</span> <span style="color:#a6e22e">element_blank</span>())
+</code></pre></div><p><!-- raw HTML omitted --></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">fits
+</code></pre></div><pre><code>##                                         coef                       mechanics
+## (Intercept)                      5.570618259                     (Intercept)
+## `NA`                            -0.008499225                            `NA`
+## Acting                          -0.017803760                          Acting
+## `Action / Movement Programming`  0.045482066 `Action / Movement Programming`
+## `Action Point Allowance System`  0.005971358 `Action Point Allowance System`
+## `Area Control / Area Influence`  0.150351170 `Area Control / Area Influence`
+## `Area Enclosure`                 0.109018663                `Area Enclosure`
+## `Area Movement`                  0.071971643                 `Area Movement`
+## `Area-Impulse`                   0.053162734                  `Area-Impulse`
+## `Auction/Bidding`                0.084446260               `Auction/Bidding`
+## `Betting/Wagering`              -0.007666051              `Betting/Wagering`
+## `Campaign / Battle Card Driven`  0.103620930 `Campaign / Battle Card Driven`
+## `Card Drafting`                  0.123457469                 `Card Drafting`
+## `Chit-Pull System`               0.019659200              `Chit-Pull System`
+## `Co-operative Play`              0.062316943             `Co-operative Play`
+## `Commodity Speculation`          0.044994027         `Commodity Speculation`
+## `Crayon Rail System`             0.113243184            `Crayon Rail System`
+## `Deck / Pool Building`           0.139559237          `Deck / Pool Building`
+## `Dice Rolling`                   0.041841409                  `Dice Rolling`
+## `Grid Movement`                  0.139045703                 `Grid Movement`
+## `Hand Management`                0.092694341               `Hand Management`
+## `Hex-and-Counter`                0.018098481               `Hex-and-Counter`
+## `Line Drawing`                   0.075106648                  `Line Drawing`
+## Memory                           0.013373754                          Memory
+## `Modular Board`                  0.047118016                 `Modular Board`
+## `Paper-and-Pencil`               0.005938252              `Paper-and-Pencil`
+## Partnerships                     0.089924526                    Partnerships
+## `Pattern Building`               0.002086264              `Pattern Building`
+## `Pattern Recognition`           -0.019596308           `Pattern Recognition`
+## `Pick-up and Deliver`            0.023104476           `Pick-up and Deliver`
+## `Player Elimination`             0.076151768            `Player Elimination`
+## `Point to Point Movement`        0.083991741       `Point to Point Movement`
+## `Press Your Luck`                0.071058775               `Press Your Luck`
+## `Rock-Paper-Scissors`           -0.093185987           `Rock-Paper-Scissors`
+## `Role Playing`                   0.072277027                  `Role Playing`
+## `Roll / Spin and Move`          -0.104947170          `Roll / Spin and Move`
+## `Route/Network Building`         0.225455278        `Route/Network Building`
+## `Secret Unit Deployment`         0.043797548        `Secret Unit Deployment`
+## `Set Collection`                 0.077365532                `Set Collection`
+## Simulation                       0.029785253                      Simulation
+## `Simultaneous Action Selection`  0.075205066 `Simultaneous Action Selection`
+## Singing                         -0.096644165                         Singing
+## `Stock Holding`                 -0.016545811                 `Stock Holding`
+## Storytelling                     0.060643875                    Storytelling
+## `Take That`                     -0.037557221                     `Take That`
+## `Tile Placement`                 0.079421844                `Tile Placement`
+## `Time Track`                     0.115744877                    `Time Track`
+## Trading                         -0.020727650                         Trading
+## `Trick-taking`                   0.030833380                  `Trick-taking`
+## `Variable Phase Order`           0.125502478          `Variable Phase Order`
+## `Variable Player Powers`         0.095615103        `Variable Player Powers`
+## Voting                           0.084719771                          Voting
+## `Worker Placement`               0.236811816              `Worker Placement`
 </code></pre>
 
 
