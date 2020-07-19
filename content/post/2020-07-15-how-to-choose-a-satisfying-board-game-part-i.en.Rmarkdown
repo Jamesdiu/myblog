@@ -13,7 +13,7 @@ toc: no
 
 {{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/catan_GOT.png" title=""  width="600" >}}
 
-Being a board game enthusiast, I always introduce board games to my friends. Some of them might be another enthusiast, while some might have an idea that the board game is equivalent to chess. Most of the time I use my instinct to estimate the favor of my friends and decide which game would be the perfect match. However, this can be very biased due to my own preference. On the other hand, I love to collect *different* board games. I hope my collection can be diverse enough to serve all kinds of my friends' backgrounds and preferences. So how should I choose a game to meet these targets? And which game should I select, such that it will enrich my collection and make sure it could be fun? (It is quite upset when you are bored by a new game you just bought...) Learning more about the general preference statistically would be a nice solution.
+Being a board game enthusiast, I always introduce board games to my friends. Some of them might be another enthusiast, while some might have an idea that the board game is equivalent to chess. Most of the time I use my instinct to estimate the favor of my friends and decide which game would be the perfect match. However, this can be very biased due to my own preference. On the other hand, I love to collect *different* board games. I hope my collection can be diverse enough to serve all kinds of my friends' backgrounds and preferences. So how should I choose a game to meet these targets? And which game should I select, such that it will enrich my collection and make sure it could be fun? (It is quite upset when you are bored by a new game you just bought...) Learning more about the general preference and the variety of games statistically would be a nice solution.
 
 ### Data description
 Regarding the data of board games, [BoardGameGeek(BGG)](https://boardgamegeek.com/) is undoubtedly the biggest source. However, I am not going to pull the data directly. Instead, I will use the data from an interesting [post by Dinesh Vatvani](https://dvatvani.github.io/BGG-Analysis-Part-1.html) about the trend and rating bias on BGG in 2018. Although it is not up-to-date data, I think it can still give us some insights and suggestions.
@@ -63,7 +63,7 @@ Features: `type`, `yearpublished`, `minplayers`, `maxplayers`, `playingtime`, `m
 
 Responses: `users_rated`, `bayes_average_rating`, `average_weight`
 
-One of the most important data is `bayes_average_rating`, which is only available for the games with at least 30 users' ratings. It is used instead of the average player rating, which you normally see on the BGG when you search for any games, in order to exclude those games with biased rating due to small sample size. After filtering out those data less than 30 ratings, we still have 15,026 games and 4,714 expansion and we will place our focus on them. Apart from `bayes_average_rating`, it is necessary to define `average_weight`. From BGG, there is no explicit defination for weight. From my observation, I would assume `average_weight` as the complexity of a game. Although it is a subjective index given by the users and it is hard to obtain this data for those new games, I think this information would be still useful for us to determine if a complex game is more popular.
+One of the most important data is `bayes_average_rating` **1**, which is only available for the games with at least 30 users' ratings. It will be used instead of the average player rating, which you normally see on the BGG when you search for any games, in order to exclude those games with biased rating due to small sample size. After filtering out those data less than 30 ratings, we still have 15,026 games and 4,714 expansion. We will place our focus on them and use it as an index to determine how good the game is. Apart from `bayes_average_rating`, it is necessary to define `average_weight`. From BGG, there is no explicit defination for weight. In general, `average_weight` is assumed to be the complexity of a game. Although it is a subjective index given by the users and it is hard to obtain this data for those new games, I think this information would be still useful for us to determine if a complex game is more popular.
 ```{r}
 df %>% filter(users_rated>=30) %>% group_by(type) %>% summarise(n=n())
 df <- df %>% filter(users_rated>=30)
@@ -369,7 +369,7 @@ As stated playing time is only an estimation of actual time, it is better and si
 |Instant | less than 30|
 |Short | 30 - 59 min|
 |Normal | 60 - 119 min|
-|Long | 120-179 min|
+|Long | 120 - 179 min|
 |Extreme |180 min or longer|
 
 
@@ -428,3 +428,5 @@ ggplot(df,
 
 {{< figure src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-21-1.png" title="" width="600">}}
 
+
+**1. [Here is more information about `bayes_average_rating`](https://boardgamegeek.com/thread/71129/what-bayesian-average)**

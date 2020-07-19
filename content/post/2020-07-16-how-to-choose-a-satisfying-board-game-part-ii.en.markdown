@@ -16,54 +16,21 @@ draft: TRUE
 
 
 
+In part I, we have gone through all the numeric data from the dataset and made some adjustment for latter study. Here are the remaining components.
+
 ```r
-games_Jan2018 <- read_csv("data/games_Jan2018.csv")
-df <- games_Jan2018
-# These columns should have missing value instead of 0, replace with NA
-list <- c("minplayers", "maxplayers", "playingtime","minplaytime", "maxplaytime")
-df[list][df[list]==0]<-NA
-
-# Update data by visiting BGG for accurate information
-df[df$id==234768,]$minplayers <- 2
-
-df[df$id==235285,]$minplayers <- 2
-df[df$id==235285,]$maxplayers <- 6
-
-df[df$id==75294,]$minplayers <- 2
-df[df$id==75294,]$maxplayers <- 20
-
-df<- df %>% 
-  # filter games with BGG rating
-  filter(users_rated>=30) %>% 
-  mutate(
-    # assign expansion as 1, boardgame as 0
-    type = ifelse(type == "boardgame", 0, 1),
-    # switch the value for those minplaytime > maxplaytime 
-    maxplaytime = ifelse(maxplaytime<minplaytime, minplaytime, maxplaytime),
-    minplaytime = ifelse(minplaytime<playingtime, minplaytime, playingtime),
-    # create age group
-    age_group = ifelse(minage>14, "15+",
-                       ifelse(minage>11, "12-14",
-                              ifelse(minage>8, "9-11",
-                                     ifelse(minage>5, "6-8","<6")))),
-    age_group = factor(age_group, levels = c("<6", "6-8", "9-11","12-14","15+")),
-    # create duration group
-    duration = ifelse(playingtime < 30, "Instant",
-                      ifelse(playingtime < 60, "Short",
-                             ifelse(playingtime <120, "Normal",
-                                    ifelse(playingtime < 180, "Long",
-                                           ifelse(is.na(playingtime),
-                                                  NA,"Extreme"))))),
-    duration = factor(duration, 
-                      levels = c("Instant", "Short", "Normal", "Long", "Extreme"))
-    ) %>%
-  # remove useless columns
-  select(id, type, name, yearpublished, age_group, duration, 
-         weight = average_weight, users_rated, BGG_rating = bayes_average_rating,
-         types, categories, mechanics, designers)
+names(df)
 ```
 
+```
+##  [1] "id"            "type"          "name"          "yearpublished"
+##  [5] "age_group"     "duration"      "maxplayers"    "minplayers"   
+##  [9] "weight"        "users_rated"   "BGG_rating"    "types"        
+## [13] "categories"    "mechanics"     "designers"
+```
+In part II, we will look into the last 4 information: `types`, `categories`, `mechanics` and `designers`. Let's start with the core of game first: `mechanics`!
 
+# Mechanics - 
 
 ```r
 mec_tags <- cSplit(df %>% select(id, mechanics), 
@@ -133,7 +100,7 @@ ggplot(fits[-1,] %>% filter(mechanics != "`NA`"), aes(x=reorder(mechanics,coef),
         axis.title.y = element_blank())
 ```
 
-<img src="/post/2020-07-16-how-to-choose-a-satisfying-board-game-part-ii.en_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+<img src="/post/2020-07-16-how-to-choose-a-satisfying-board-game-part-ii.en_files/figure-html/unnamed-chunk-5-1.png" width="672" />
 
 ```r
 fits

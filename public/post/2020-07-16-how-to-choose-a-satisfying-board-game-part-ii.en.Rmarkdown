@@ -23,9 +23,7 @@ library(treemap)
 library(entropy)
 library(tidyselect)
 ```
-
-
-```{r data_cleaning, message=FALSE}
+```{r data_cleaning, include=FALSE}
 games_Jan2018 <- read_csv("data/games_Jan2018.csv")
 df <- games_Jan2018
 # These columns should have missing value instead of 0, replace with NA
@@ -68,11 +66,19 @@ df<- df %>%
     ) %>%
   # remove useless columns
   select(id, type, name, yearpublished, age_group, duration, 
+         maxplayers, minplayers,
          weight = average_weight, users_rated, BGG_rating = bayes_average_rating,
          types, categories, mechanics, designers)
 ```
 
 
+In part I, we have gone through all the numeric data from the dataset and made some adjustment for latter study. Here are the remaining components.
+```{r}
+names(df)
+```
+In part II, we will look into the last 4 information: `types`, `categories`, `mechanics` and `designers`. Let's start with the core of game first: `mechanics`!
+
+# Mechanics - 
 ```{r}
 mec_tags <- cSplit(df %>% select(id, mechanics), 
                    splitCols = "mechanics",

@@ -90,7 +90,7 @@
     <img src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/catan_GOT.png" width="600"/> 
 </figure>
 
-<p>Being a board game enthusiast, I always introduce board games to my friends. Some of them might be another enthusiast, while some might have an idea that the board game is equivalent to chess. Most of the time I use my instinct to estimate the favor of my friends and decide which game would be the perfect match. However, this can be very biased due to my own preference. On the other hand, I love to collect <em>different</em> board games. I hope my collection can be diverse enough to serve all kinds of my friends&rsquo; backgrounds and preferences. So how should I choose a game to meet these targets? And which game should I select, such that it will enrich my collection and make sure it could be fun? (It is quite upset when you are bored by a new game you just bought&hellip;) Learning more about the general preference statistically would be a nice solution.</p>
+<p>Being a board game enthusiast, I always introduce board games to my friends. Some of them might be another enthusiast, while some might have an idea that the board game is equivalent to chess. Most of the time I use my instinct to estimate the favor of my friends and decide which game would be the perfect match. However, this can be very biased due to my own preference. On the other hand, I love to collect <em>different</em> board games. I hope my collection can be diverse enough to serve all kinds of my friends&rsquo; backgrounds and preferences. So how should I choose a game to meet these targets? And which game should I select, such that it will enrich my collection and make sure it could be fun? (It is quite upset when you are bored by a new game you just bought&hellip;) Learning more about the general preference and the variety of games statistically would be a nice solution.</p>
 <h3 id="data-description">Data description</h3>
 <p>Regarding the data of board games, <a href="https://boardgamegeek.com/">BoardGameGeek(BGG)</a> is undoubtedly the biggest source. However, I am not going to pull the data directly. Instead, I will use the data from an interesting <a href="https://dvatvani.github.io/BGG-Analysis-Part-1.html">post by Dinesh Vatvani</a> about the trend and rating bias on BGG in 2018. Although it is not up-to-date data, I think it can still give us some insights and suggestions.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">games_Jan2018 <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">read_csv</span>(<span style="color:#e6db74">&#34;data/games_Jan2018.csv&#34;</span>)
@@ -98,7 +98,7 @@ df <span style="color:#f92672">&lt;-</span> games_Jan2018
 </code></pre></div><p>In this dataset, we have total 95,777 board games, including the 80,105 base games and 15,672 expansion. The information can also be separated into 2 groups: games features and responses on BGG. After removing some duplicated or reduntant information, below are the useful columns:</p>
 <p>Features: <code>type</code>, <code>yearpublished</code>, <code>minplayers</code>, <code>maxplayers</code>, <code>playingtime</code>, <code>minage</code>, <code>types</code>, <code>categories</code>, <code>mechanics</code>, <code>desginers</code></p>
 <p>Responses: <code>users_rated</code>, <code>bayes_average_rating</code>, <code>average_weight</code></p>
-<p>One of the most important data is <code>bayes_average_rating</code>, which is only available for the games with at least 30 users&rsquo; ratings. It is used instead of the average player rating, which you normally see on the BGG when you search for any games, in order to exclude those games with biased rating due to small sample size. After filtering out those data less than 30 ratings, we still have 15,026 games and 4,714 expansion and we will place our focus on them. Apart from <code>bayes_average_rating</code>, it is necessary to define <code>average_weight</code>. From BGG, there is no explicit defination for weight. From my observation, I would assume <code>average_weight</code> as the complexity of a game. Although it is a subjective index given by the users and it is hard to obtain this data for those new games, I think this information would be still useful for us to determine if a complex game is more popular.</p>
+<p>One of the most important data is <code>bayes_average_rating</code> <strong>1</strong>, which is only available for the games with at least 30 users&rsquo; ratings. It will be used instead of the average player rating, which you normally see on the BGG when you search for any games, in order to exclude those games with biased rating due to small sample size. After filtering out those data less than 30 ratings, we still have 15,026 games and 4,714 expansion. We will place our focus on them and use it as an index to determine how good the game is. Apart from <code>bayes_average_rating</code>, it is necessary to define <code>average_weight</code>. From BGG, there is no explicit defination for weight. In general, <code>average_weight</code> is assumed to be the complexity of a game. Although it is a subjective index given by the users and it is hard to obtain this data for those new games, I think this information would be still useful for us to determine if a complex game is more popular.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">df <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">filter</span>(users_rated<span style="color:#f92672">&gt;=</span><span style="color:#ae81ff">30</span>) <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">group_by</span>(type) <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">summarise</span>(n<span style="color:#f92672">=</span><span style="color:#a6e22e">n</span>())
 </code></pre></div><pre><code>## # A tibble: 2 x 2
 ##    type     n
@@ -236,7 +236,7 @@ df <span style="color:#f92672">&lt;-</span> games_Jan2018
 </tr>
 <tr>
 <td align="left">Long</td>
-<td align="left">120-179 min</td>
+<td align="left">120 - 179 min</td>
 </tr>
 <tr>
 <td align="left">Extreme</td>
@@ -262,6 +262,7 @@ duration_group <span style="color:#f92672">&lt;-</span> df <span style="color:#f
     <img src="/post/2020-07-15-how-to-choose-a-satisfying-board-game-part-i.en_files/unnamed-chunk-21-1.png" width="600"/> 
 </figure>
 
+<p><strong>1. <a href="https://boardgamegeek.com/thread/71129/what-bayesian-average">Here is more information about <code>bayes_average_rating</code></a></strong></p>
 
 
 
